@@ -1,0 +1,52 @@
+
+/* Tab specific styles */
+[data-state="active"] {
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  z-index: 10;
+}
+
+/* Calendar specific styles */
+.rdp {
+  position: relative;
+  z-index: 50 !important;
+}
+
+.rdp-month {
+  z-index: 50 !important;
+  position: relative;
+}
+
+.rdp-cell, .rdp-day, .rdp-button {
+  pointer-events: auto !important;
+  position: relative;
+  z-index: 50 !important;
+}
+
+/* Special fix for appointment tab */
+[data-value="appointment"] .rdp {
+  z-index: 9999 !important;
+  pointer-events: auto !important;
+}
+
+[data-value="appointment"].active {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+/* Additional fixes for the calendar component */
+.rdp-months {
+  background-color: white;
+}
+
+[data-value="appointment"] {
+  position: relative;
+  z-index: 20;
+}
+
+/* Tabs content specific fixes */
+[role="tabpanel"] {
+  position: relative;
+  z-index: 10;
+}

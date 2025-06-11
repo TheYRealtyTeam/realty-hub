@@ -1,0 +1,10 @@
+
+@layer components {
+  .property-card {
+    @apply bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:-translate-y-1;
+  }
+
+  .team-card {
+    @apply bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl;
+  }
+}

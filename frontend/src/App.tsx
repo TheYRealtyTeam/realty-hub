@@ -1,27 +1,28 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Index from "./pages/Index";
-import NotFound from "./pages/NotFound";
 
-const queryClient = new QueryClient();
+import React from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { FreshAuthProvider } from '@/contexts/FreshAuthContext';
+import { Toaster } from 'sonner';
+import Auth from '@/pages/Auth';
+import Profile from '@/pages/Profile';
+import Index from '@/pages/Index';
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
+console.log('App.tsx: Starting to load App component');
+
+const App = () => {
+  console.log('App: Starting to render App component with FreshAuthProvider');
+  
+  return (
+    <FreshAuthProvider>
+      <Routes>
+        <Route path="/" element={<Index />} />
+        <Route path="/auth" element={<Auth />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/home" element={<Index />} />
+      </Routes>
       <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+    </FreshAuthProvider>
+  );
+};
 
 export default App;
