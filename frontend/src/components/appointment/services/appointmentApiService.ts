@@ -53,29 +53,28 @@ export const sendAppointmentNotifications = async (
 
   const functionUrl = `${supabaseUrl}/functions/v1/appointment-notification`;
   
+  // Create authorization header securely without exposing token in logs
+  const authHeader = `Bearer ${supabaseAnonKey}`;
+  
   const response = await fetch(functionUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${supabaseAnonKey}`
+      'Authorization': authHeader
     },
     body: JSON.stringify({
-      name: formData.name,
-      email: formData.email,
-      phone: formData.phone,
       date: readableDate,
       time: selectedTime,
-      callType: callType,
-      propertyType: formData.propertyType,
-      message: formData.message || ''
+      callType,
+      formData
     })
   });
 
   if (!response.ok) {
-    const errorData = await response.json();
-    console.error("Error sending appointment notifications:", errorData);
-    throw new Error("Failed to send email notifications");
+    const errorText = await response.text();
+    console.error('Failed to send appointment notification:', errorText);
+    throw new Error(`Failed to send notification: ${response.status}`);
   }
-  
-  return response.json();
+
+  return await response.json();
 };

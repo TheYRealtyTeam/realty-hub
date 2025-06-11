@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from '@/components/ui/use-toast';
@@ -144,7 +143,7 @@ export const useBlogPosts = ({ searchTerm, currentPage, postsPerPage }: UseBlogP
             await fetchBlogPosts();
             break;
           } catch (error) {
-            console.log(`Retry ${i + 1}/${retries} failed:`, error);
+            console.log('Retry attempt failed:', { retryNumber: i + 1, maxRetries: retries, error });
             if (i < retries - 1) {
               await new Promise(resolve => setTimeout(resolve, delay));
             }
