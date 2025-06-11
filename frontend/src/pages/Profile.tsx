@@ -28,7 +28,7 @@ const Profile = () => {
   const [fullName, setFullName] = useState('');
 
   useEffect(() => {
-    // Redirect if not logged in
+    // Redirect if not authenticated
     if (!user) {
       navigate('/');
       return;
@@ -38,15 +38,16 @@ const Profile = () => {
       try {
         setLoading(true);
         
-        // Use Supabase client for secure API calls
+        // Use authenticated Supabase client - no manual token handling
         const { data, error } = await supabase
           .from('profiles')
-          .select('*')
+          .select('id, username, full_name, avatar_url')
           .eq('id', user.id)
           .single();
 
         if (error) {
-          throw error;
+          console.error('Profile fetch error:', error.message);
+          throw new Error('Failed to load profile data');
         }
 
         if (data) {
@@ -62,7 +63,7 @@ const Profile = () => {
           setFullName(profileData.full_name || '');
         }
       } catch (error: any) {
-        console.error('Error fetching profile:', error);
+        console.error('Error fetching profile:', error.message);
         toast.error('Failed to load profile data');
       } finally {
         setLoading(false);
@@ -74,22 +75,26 @@ const Profile = () => {
 
   const handleUpdateProfile = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user) return;
+    if (!user) {
+      toast.error('Authentication required');
+      return;
+    }
 
     setUpdating(true);
     try {
-      // Use Supabase client for secure updates
+      // Use authenticated Supabase client for secure updates
       const { error } = await supabase
         .from('profiles')
         .update({
-          username,
-          full_name: fullName,
+          username: username.trim(),
+          full_name: fullName.trim(),
           updated_at: new Date().toISOString(),
         })
         .eq('id', user.id);
 
       if (error) {
-        throw error;
+        console.error('Profile update error:', error.message);
+        throw new Error('Failed to update profile');
       }
       
       toast.success('Profile updated successfully');
@@ -97,12 +102,12 @@ const Profile = () => {
       // Update local profile state
       setProfile(prev => prev ? {
         ...prev,
-        username,
-        full_name: fullName
+        username: username.trim(),
+        full_name: fullName.trim()
       } : null);
       
     } catch (error: any) {
-      console.error('Error updating profile:', error);
+      console.error('Error updating profile:', error.message);
       toast.error(error.message || 'Failed to update profile');
     } finally {
       setUpdating(false);
@@ -110,8 +115,13 @@ const Profile = () => {
   };
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate('/');
+    try {
+      await signOut();
+      navigate('/');
+    } catch (error) {
+      console.error('Sign out error:', error);
+      toast.error('Failed to sign out');
+    }
   };
 
   if (loading) {
@@ -156,6 +166,7 @@ const Profile = () => {
                   value={fullName}
                   onChange={(e) => setFullName(e.target.value)}
                   placeholder="Your full name"
+                  maxLength={100}
                 />
               </div>
               
@@ -166,6 +177,7 @@ const Profile = () => {
                   value={username}
                   onChange={(e) => setUsername(e.target.value)}
                   placeholder="Your username"
+                  maxLength={50}
                 />
               </div>
               
