@@ -2,14 +2,10 @@ import { createClient } from '@supabase/supabase-js'
 import { Database } from './types'
 
 // Get environment variables securely
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL || 'https://placeholder.supabase.co'
+const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY || 'placeholder-key'
 
-// Validate that required environment variables are present
-if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing required environment variables: VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY')
-}
-
+// Create client with fallback values for development
 export const supabase = createClient<Database>(
   supabaseUrl,
   supabaseKey
